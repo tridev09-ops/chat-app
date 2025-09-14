@@ -1,0 +1,10 @@
+:root {
+    --body-bg: #eee;
+    --black: #111;
+    --white: #fff;
+    --grey: grey;
+    --accent: crimson;
+    --btn-hover: red;
+    --input-outline: rgba(255,0,0,0.6);
+    --font-family: Arial;
+}

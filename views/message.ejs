@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Log in</title>
+        <link rel="stylesheet" href="/css/root.css">
+        <link rel="stylesheet" href="/css/message.css">
+    </head>
+    <body>
+        <div class="title">
+            <a href="/">
+<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M15 18l-6-6 6-6" 
+          fill="none" 
+          stroke="currentColor" 
+          stroke-width="2.2" 
+          stroke-linecap="round" 
+          stroke-linejoin="round"/>
+  </svg></a>
+            <span><%= receiver %></span>
+        </div>
+        
+        <div class="messageCon">
+            <%- include('./components/chat/messageCon.ejs', {userData,
+            messages}) 
+            %>
+        </div>
+        
+        <form>
+            <input type="text" id="msg">
+            <button type="submit"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M2 21l20-9L2 3v7l13 2-13 2v7z" 
+          fill="currentColor" 
+          stroke="currentColor" 
+          stroke-linejoin="round" 
+          stroke-linecap="round" />
+  </svg>
+</button>
+        </form>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+const socket = io(); // connects automatically to your Express server
+
+const form = document.querySelector('form')
+const msgInput = document.querySelector('#msg')
+const messageCon = document.querySelector('.messageCon')
+const noMessage=document.querySelector('.no-message')
+const dateCon = document.querySelectorAll('.date')
+
+const username = "<%= userData.name %>"
+const receiver = "<%= receiver %>"
+
+const getTime = ()=> {
+    const dt=new Date()
+    let timeStr = dt.toLocaleTimeString()
+
+    return timeStr.replace(timeStr.slice(-6, -3), '')
+}
+const getDate = ()=> {
+    const dt=new Date()
+    const day = dt.getDate()
+    const month = dt.getMonth()
+    const year = dt.getFullYear()
+
+    const monthArr = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec'
+    ]
+    return `${day} ${monthArr[month]} ${year}`
+}
+
+form.addEventListener('submit', (e)=> {
+    e.preventDefault()
+    messageCon.scrollTo(0, messageCon.scrollHeight)
+    
+    let dateCon = document.querySelectorAll('.date')
+    let dateStr = dateCon.length > 0 ? dateCon[dateCon.length - 1].innerText : ''
+    let date=getDate()
+    
+    if(date!=dateStr){
+        messageCon.innerHTML += `     
+        <div class="date">${date}</div>`
+        dateStr=date
+    }
+    messageCon.innerHTML += `     
+        <div class="message sended">
+            <span class="content">
+                ${msgInput.value}
+            </span>
+
+            <span class="time">
+                ${getTime()}
+            </span>
+        </div>`
+
+    socket.emit("chat message", {
+        sender: username,
+        receiver: receiver,
+        message: msgInput.value
+    })
+
+    // Empty input after sending message
+    msgInput.value = ''
+    noMessage.style.display='nne'
+})
+
+socket.on("connect", () => {
+    console.log("Connected:", socket.id);
+    socket.emit("set user", username)
+});
+
+socket.on("chat message", (messageObj) => {
+    let dateCon = document.querySelectorAll('.date')
+    let dateStr = dateCon.length > 0 ? dateCon[dateCon.length - 1].innerText : ''
+    let date=getDate()
+    
+    if(date!=dateStr){
+        messageCon.innerHTML += `     
+        <div class="date">${date}</div>`
+        dateStr=date
+    }
+    messageCon.innerHTML += `     
+        <div class="message received">
+            <span class="content">
+                ${messageObj.message}
+            </span>
+
+            <span class="time">
+                ${getTime()}
+            </span>
+        </div>`
+})
+        </script>
+    </body>
+</html>

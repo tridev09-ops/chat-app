@@ -1,0 +1,63 @@
+<%
+const extractTime = (dt)=> {
+    let timeStr = dt.toLocaleTimeString()
+
+    return timeStr.replace(timeStr.slice(-6, -3), '')
+}
+const extractDate = (dt)=> {
+    const day = dt.getDate()
+    const month = dt.getMonth()
+    const year = dt.getFullYear()
+
+    const monthArr = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec'
+    ]
+    return `${day} ${monthArr[month]} ${year}`
+}
+%>
+
+<% if (typeof(messages) == 'string') {
+    %>
+    <div class="no-message">
+        No messages found
+    </div>
+    <%
+} else {
+    %>
+    <% let dateStr='' %>
+    <% messages.forEach(messageObj => {
+        %>
+        <% let extractedDate = extractDate(messageObj.createdAt) %>
+        <% if (extractedDate != dateStr) {
+            %>
+            <div class="date">
+                <%= extractedDate %>
+            </div>
+            <% dateStr = extractedDate %>
+            <%
+        } %>
+        <div class="message  <%= userData.name == messageObj.sender?'sended': 'received'%>">
+            <span class="content">
+                <%= messageObj.message %>
+            </span>
+
+            <span class="time">
+                <%= extractTime(messageObj.createdAt)%>
+            </span>
+        </div>
+        <%
+    }) %>
+    <%
+}
+%>

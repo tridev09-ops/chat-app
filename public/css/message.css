@@ -1,0 +1,122 @@
+body {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: var(--font-family);
+    color: var(--black);
+    background: var(--body-bg);
+    font-size: 16px;
+    overflow: hidden;
+}
+
+.title{
+    display: flex;
+    padding: 8px;
+    font-size: 18px;
+    background: var(--accent);
+    color: var(--white);
+}
+
+.title a{
+    text-decoration: none;
+    color: var(--white);
+}
+
+.title span{
+    position: relative;
+    left: 42.5%;
+    transform: translateX(-50%);
+    font-weight: 400;
+}
+
+.messageCon{
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 60px;
+    overflow-y: auto;
+    height: 72.5svh;
+}
+
+.date{
+    margin: 12px auto;
+    padding: 8px;
+    font-size: 14px;
+    background: var(--white);
+    border-radius: 8px;
+}
+
+.message{
+    background: var(--white);
+    width: fit-content;
+    padding: 8px 12px;
+    margin: 12px;
+    border-radius: 8px;
+    max-width: 65%;
+    flex-wrap: warp;
+    display: flex;
+    flex-direction: column;
+}
+
+.message.sended{
+    margin-left: auto;
+}
+
+.message.sended .content{
+    display: flex;
+    justify-content: end;
+}
+
+.message .time{
+    font-size: 10px;
+    margin-top: 4px;
+}
+
+.message.sended .time{
+    display: flex;
+    justify-content: end;
+    margin-top: 4px;
+}
+
+
+form{
+    position: fixed;
+    bottom: 0px;
+    background: var(--white);
+    padding: 16px;
+    display: flex;
+    justify-content: space-around;
+    gap: 8px;
+}
+
+form *{
+    padding: 12px;
+    font-size: 18px;
+    border-radius: 8px;
+}
+
+form input{
+    width: 80%;
+    outline: none;
+    border: 1px solid var(--grey);
+}
+
+form input:focus{
+    outline: 2px solid var(--input-outline);
+}
+
+form button{
+    background: var(--accent);
+    color: var(--white);
+    border: none;
+    padding: 0;
+}
+
+form button:hover{
+    background: var(--btn-hover);
+}
+
+svg{
+    color: var(--white);
+    height: 24px;
+    width: 24px;
+}

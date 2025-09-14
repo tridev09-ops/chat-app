@@ -1,48 +1,72 @@
 import mongoose from 'mongoose';
-import dotenv from 'dotenv'
+import express from 'express';
+import dotenv from 'dotenv';
+import path from "path";
+import cookieParser from 'cookie-parser'
+import http from "http";
+import initSocket from "./socket/socket.js";
+import connectDb from './db/db.js'
+import authRoutes from './routes/authRoutes.js'
+import errMiddleware from './middleware/errMiddleware.js'
+import authMiddleware from './middleware/authMiddleware.js'
+import {
+    fetchUser,
+    fetchConversation
+} from "./routes/userFunction.js"
+import {
+    fetchMessage
+} from "./routes/messageFunction.js"
 
-dotenv.config()
+const app = express()
+await dotenv.config()
+const PORT = process.env.PORT || 3000
+// Create HTTP server
+const server = http.createServer(app);
 
-const uri = process.env.MONGO_DB_URI;
+app.use(express.json())
+app.use(express.urlencoded({
+    extended: true
+}))
+app.use(express.static("public"))
+app.use(cookieParser())
+app.set("view engine", "ejs")
+app.set("views", path.join(process.cwd(), "views"));
 
-await mongoose.connect(uri);
-// Connect to MongoDB
-mongoose.connect(uri)
-.then(() => console.log('Connected to MongoDB'))
-.catch(err => console.error('Could not connect to MongoDB', err));
+// Error middleware
+app.use(errMiddleware)
 
-const UserSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
-    },
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-    },
-    password: {
-        type: String,
-        required: true,
-    },
+app.get('/', authMiddleware, async(req, res)=> {
+    const userData = await req.user
+    const users = await fetchUser()
+    const conversations = await fetchConversation(userData.name)
+    
+    console.log('conversations',conversations)
+    
+    res.render('users', {
+        userData,
+        users,
+        conversations
+    })
+})
+
+app.get('/message/:receiver', authMiddleware, async(req, res)=> {
+    const userData = await req.user
+    const receiver = req.params.receiver
+    const messages = await fetchMessage(userData.name, receiver)
+    res.render('message', {
+        userData,
+        receiver,
+        messages
+    })
+})
+
+app.use('/auth', authRoutes)
+
+// Start socket.io server
+initSocket(server);
+
+// Wait for database to connect and run server
+await connectDb()
+server.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
 });
-
-const User = mongoose.model('User', UserSchema);
-
-async function run() {
-    try {
-        /*const user = new User( {
-            name: "Copa",
-            email: "copa@gmail.com",
-            password: "12345678"
-        })
-        const result = await user.save();
-
-        console.log(`A document was inserted with the _id: ${result._id}`);
-        */
-    } finally {
-        const collections = await User.find({name: 'Tridev'})
-        console.log("collections: ", collections)
-    }
-}
-run().catch(console.dir);

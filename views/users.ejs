@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Users</title>
+        <link rel="stylesheet" href="/css/root.css">
+        <link rel="stylesheet" href="/css/users.css">
+    </head>
+    <body>
+        <div class="logout-container">
+        <a class="logout" href="/auth/logout">logout</a>
+        </div>
+        <h2>Conversations</h2>
+        <div class="users-container">
+        <% conversations.forEach(conversation=>{ %>
+            <% conversation.participants.forEach(participant=>{ %>
+                <% if(participant!=userData.name){ %>
+                    <a class="user" href="/message/<%=participant%>"><%= participant %></a><br>
+                <% } %>
+            <% }) %>
+        <% }) %>
+        </div>
+        
+        <h2>Users loged in this website</h2>
+        <div class="conversations-container">
+        <% users.forEach(user=>{ %>
+            <% if(user.name!=userData.name){ %>
+                <a class="user" href="/message/<%=user.name%>"><%= user.name %></a><br>
+            <% } %>
+        <% }) %>
+        </div>
+    </body>
+</html>
