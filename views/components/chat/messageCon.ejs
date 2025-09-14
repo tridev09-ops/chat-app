@@ -27,14 +27,6 @@ const extractDate = (dt)=> {
 }
 %>
 
-<% if (typeof(messages) == 'string') {
-    %>
-    <div class="no-message">
-        No messages found
-    </div>
-    <%
-} else {
-    %>
     <% let dateStr='' %>
     <% messages.forEach(messageObj => {
         %>
@@ -58,6 +50,3 @@ const extractDate = (dt)=> {
         </div>
         <%
     }) %>
-    <%
-}
-%>
