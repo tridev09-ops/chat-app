@@ -51,6 +51,8 @@ const dateCon = document.querySelectorAll('.date')
 const username = "<%= userData.name %>"
 const receiver = "<%= receiver %>"
 
+messageCon.scrollTo(0, messageCon.scrollHeight)
+    
 const getTime = ()=> {
     const dt=new Date()
     let timeStr = dt.toLocaleTimeString()
@@ -121,6 +123,7 @@ socket.on("connect", () => {
 });
 
 socket.on("chat message", (messageObj) => {
+    messageCon.scrollTo(0, messageCon.scrollHeight)
     let dateCon = document.querySelectorAll('.date')
     let dateStr = dateCon.length > 0 ? dateCon[dateCon.length - 1].innerText : ''
     let date=getDate()
